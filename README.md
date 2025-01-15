@@ -1,4 +1,4 @@
-# Nagios Full Deployment 
+# Nagios Full Installations 
 
 <pre>
 sudo apt update && apt upgrade -y  
