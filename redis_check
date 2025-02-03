@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Author: Tirzok Private Limited
+# 2022-04-24
+
+# Nagios Exit Codes
+OK=0
+WARNING=1
+CRITICAL=2
+UNKNOWN=3
+
+MNP_CNT=$(redis-cli --no-auth-warning -h 192.168.200.121 -a 'password' KEYS "880"* | wc -l)
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "Failed to retrieve MNP count."
+    exit $UNKNOWN
+fi
+
+if [ "$MNP_CNT" -lt 900000 ]; then
+    echo "WARNING: MNP Count at Cache is $MNP_CNT, which is below the threshold of 900000!"
+    exit $WARNING
+else
+    echo "OK: MNP Count at Cache is $MNP_CNT."
+    exit $OK
+fi
