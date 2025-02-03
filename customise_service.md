@@ -62,3 +62,34 @@ case $CODE in
         ;;
 esac
 </pre>
+
+# Server end 
+<pre>
+ vim proda2putilityserver1.cfg
+</pre>pre>
+
+<pre>
+define service{
+        use                     generic-service
+        host_name               proda2putilityserver1
+        service_description     Response_Time
+        check_command           check_response_time_proda2putilityserver1
+        check_interval          5
+        retry_interval          1
+        max_check_attempts      1
+        check_period            24x7
+        flap_detection_enabled  0
+        notifications_enabled   1
+        contact_groups          mnpspdc_alert
+}
+</pre>
+<pre>
+	define command{
+        command_name    check_response_time_proda2putilityserver1
+        command_line    $USER1$/check_nrpe -2 -H 192.168.200.101 -c check_response_time
+}
+</pre>
+<pre>
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+ systemctl reload nagios.service
+</pre>
