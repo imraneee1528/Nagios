@@ -62,11 +62,19 @@ case $CODE in
         ;;
 esac
 </pre>
+<pre>
+vim /etc/nagios/nrpe.cfg
+command[check_response_time]=/usr/lib/nagios/plugins/check_response_time
+</pre>
+<pre>
+/usr/lib/nagios/plugins/check_response_time
+ systemctl restart nagios-nrpe-server.service
+</pre>
 
 # Server end 
 <pre>
  vim proda2putilityserver1.cfg
-</pre>pre>
+</pre>
 
 <pre>
 define service{
