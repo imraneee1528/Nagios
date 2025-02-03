@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# Nagios Exit Codes
+OK=0
+WARNING=1
+CRITICAL=2
+UNKNOWN=3
+
+# Time Variables
+duration=1
+minutestamp=$(date -d "$duration minutes ago" '+%d/%b/%Y:%H:%M')
+
+# API URL
+API_URL="http://192.168.200.101:8080/ttu/api/v1/operator/validation"
+
+# Get API Response Time
+RESPONSE_TIME=$(curl -o /dev/null -s -w "%{time_total}" "$API_URL")
+
+# Ensure RESPONSE_TIME is a valid number
+if ! [[ "$RESPONSE_TIME" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    echo "UNKNOWN: Failed to fetch response time."
+    exit $UNKNOWN
+fi
+
+# Determine Exit Code
+if (( $(echo "$RESPONSE_TIME < 1" | bc -l) )); then
+    CODE=$OK
+    STATUS="OK"
+elif (( $(echo "$RESPONSE_TIME < 2" | bc -l) )); then
+    CODE=$WARNING
+    STATUS="WARNING"
+else
+    CODE=$CRITICAL
+    STATUS="CRITICAL"
+fi
+
+# Output Result
+echo "$STATUS: Response Time = $RESPONSE_TIME seconds."
+
+# Exit with corresponding code
+exit $CODE
